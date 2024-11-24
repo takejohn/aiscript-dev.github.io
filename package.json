@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "aiscript-vscode": "github:aiscript-dev/aiscript-vscode#v0.1.11",
+    "vitepress": "^1.1.4",
+    "vue": "^3.4.25"
+  }
+}
