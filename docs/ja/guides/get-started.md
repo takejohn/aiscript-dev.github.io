@@ -262,11 +262,11 @@ AiScriptファイルにメタデータを埋め込める機能です。
 
 ## エラーメッセージ
 進行不能なエラーが発生するとエラーメッセージが表示されます。  
-```aiscript
+```aiscript playground
 let scores=[10, 8, 5, 5]
 let 3rd=scores[2] // unexpected token: NumberLiteral (Line 2, Column 5)
 ```
-```aiscript
+```aiscript playground
 let arr=[]
 arr[0] // Runtime: Index out of range. Index: 0 max: -1 (Line 2, Column 4)
 ```
