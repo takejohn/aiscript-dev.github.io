@@ -23,7 +23,7 @@ export function createPlaygroundTransformer(): ShikiTransformer {
         },
         postprocess: (html, options) => {
             if (options.lang !== 'aiscript' || !options.meta?.__raw?.includes('playground') || codeRaw == null) return;
-            return `${html}<Playground code="${escapeHtml(codeRaw)}"></Playground>`;
+            return `${html}<CodeBlockPlayground code="${escapeHtml(codeRaw)}"></CodeBlockPlayground>`;
         },
     };
 }

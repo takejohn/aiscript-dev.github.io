@@ -3,7 +3,8 @@ import { h } from 'vue'
 import type { Theme } from 'vitepress'
 import DefaultTheme from 'vitepress/theme'
 import './style.css'
-import Playground from '../components/Playground.vue'
+import CodeBlockPlayground from '../components/CodeBlockPlayground.vue'
+import Playground from '../pages/Playground.vue'
 
 export default {
   extends: DefaultTheme,
@@ -13,6 +14,8 @@ export default {
     })
   },
   enhanceApp({ app, router, siteData }) {
-    app.component('Playground', Playground);
+    app.component('CodeBlockPlayground', CodeBlockPlayground);
+
+    app.component('playground', Playground);
   }
 } satisfies Theme
