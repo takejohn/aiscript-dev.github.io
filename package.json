@@ -1,11 +1,16 @@
 {
+  "name": "aiscript-docs",
+  "type": "module",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {
+    "@syuilo/aiscript": "^0.19.0",
     "aiscript-vscode": "github:aiscript-dev/aiscript-vscode#v0.1.11",
+    "shiki": "^1.23.1",
+    "vite": "^5.4.11",
     "vitepress": "^1.1.4",
     "vue": "^3.4.25"
   }
