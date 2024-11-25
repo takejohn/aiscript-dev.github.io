@@ -7,15 +7,14 @@ hero:
   text: "ブラウザで動く\nユーザースクリプト用言語"
   tagline: ユーザーが作成するプラグインやミニゲームを安全に作動
   image:
-    src: /aiscript.webp
     alt: AiScript
   actions:
     - theme: brand
       text: はじめる
       link: /ja/guides/get-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: ブラウザで試す
+      link: /ja/playground
 
 features:
   - title: 親しみやすいシンタックス
