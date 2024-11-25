@@ -14,8 +14,8 @@ hero:
       text: はじめる
       link: /ja/guides/get-started
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: ブラウザで試す
+      link: /ja/playground
 
 features:
   - title: 親しみやすいシンタックス
