@@ -3,6 +3,7 @@ import { defineConfig, type DefaultTheme } from 'vitepress';
 const guideNav: DefaultTheme.SidebarItem[] = [
     { text: 'Introduction', link: 'get-started' },
     { text: 'Execution', link: 'execution' },
+    { text: 'Implement to Your App', link: 'implementation' },
 ];
 
 const referenceNav: DefaultTheme.SidebarItem[] = [

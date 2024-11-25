@@ -11,6 +11,7 @@ const guideNav: DefaultTheme.SidebarItem[] = [
         items: [
             { text: 'はじめに', link: 'get-started' },
             { text: '実行方法', link: 'execution' },        
+            { text: 'アプリに組み込む', link: 'implementation' },
         ],
     },
     { text: 'リファレンス', base: '/ja/references/', link: 'syntax' },
