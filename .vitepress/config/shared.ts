@@ -8,6 +8,7 @@ export const shared = defineConfig({
     srcDir: 'docs',
 
     markdown: {
+        math: true,
         codeTransformers: [
             createPlaygroundTransformer(),
         ],

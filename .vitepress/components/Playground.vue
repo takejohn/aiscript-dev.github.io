@@ -78,7 +78,7 @@ async function run() {
     interpreter = new InterpreterClass({}, {
         out: (value) => {
             logs.value.push({
-                text: value.type === 'num' ? value.value.toString() : value.type === 'str' ? value.value : utils.valToString(value) ?? '',
+                text: value.type === 'num' ? value.value.toString() : value.type === 'str' ? `"${value.value}"` : JSON.stringify(utils.valToJs(value), null, 2) ?? '',
             });
         },
     });
