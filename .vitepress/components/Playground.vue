@@ -1,7 +1,9 @@
 <template>
     <div :class="$style.playgroundRoot">
         <div :class="$style.playgroundButtons">
-            <button @click="run">Run</button>
+            <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
+            <button :class="[$style.playgroundButton]" :disabled="loading" @click="stop">Abort</button>
+            <button :class="[$style.playgroundButton]" :disabled="loading" @click="clearLog">Clear</button>
         </div>
         <div :class="$style.playgroundLogs">
             <div v-for="log in logs" :key="log" :class="$style.playgroundLogItem">{{ log }}</div>
@@ -18,6 +20,7 @@ const props = defineProps<{
 }>();
 
 const logs = ref<string[]>([]);
+const loading = ref(false);
 
 let ParserClass: typeof Parser | null = null;
 let InterpreterClass: typeof Interpreter | null = null;
@@ -27,6 +30,7 @@ let parser: Parser | null = null;
 let interpreter: Interpreter | null = null;
 
 async function run() {
+    loading.value = true;
     logs.value = ['[Playground] Loading...'];
     if (!ParserClass || !InterpreterClass || !utils) {
         const [
@@ -54,9 +58,20 @@ async function run() {
     });
 
     logs.value = [];
+    loading.value = false;
 
     const ast = parser.parse(props.code);
     await interpreter.exec(ast);
+}
+
+function stop() {
+    if (interpreter) {
+        interpreter.abort();
+    }
+}
+
+function clearLog() {
+    logs.value = [];
 }
 </script>
 
@@ -69,17 +84,38 @@ async function run() {
     gap: 12px;
 }
 
-.playgroundButtons button {
-    background-color: var(--vp-button-brand-bg);
-    color: var(--vp-button-brand-text);
-    font-weight: 700;
+.playgroundButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.playgroundButton {
     transition: background-color 0.25s;
     padding: 4px 16px;
     border-radius: 8px;
-    cursor: pointer;
 }
 
-.playgroundButtons button:hover {
+.playgroundButton:disabled {
+    opacity: 0.5;
+}
+
+.playgroundButton:hover {
+    background-color: var(--vp-button-alt-hover-bg);
+}
+
+.playgroundButton:not(.playgroundButtonPrimary) {
+    font-size: 80%;
+    line-height: 1.5;
+}
+
+.playgroundButtonPrimary {
+    background-color: var(--vp-button-brand-bg);
+    color: var(--vp-button-brand-text);
+    font-weight: 700;
+}
+
+.playgroundButtonPrimary:hover {
     color: var(--vp-button-brand-hover-text);
     background-color: var(--vp-button-brand-hover-bg);
 }
