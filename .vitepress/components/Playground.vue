@@ -33,13 +33,13 @@ async function run() {
             { Parser, Interpreter, utils: importedUtils },
         ] = await Promise.all([
             import('@syuilo/aiscript'),
-            new Promise((resolve) => setTimeout(resolve, 250)),
+            new Promise((resolve) => setTimeout(resolve, 250)), // あまりにも高速に切り替わると実行できてるのかわかりにくいので、最低250msはロード画面を挟む
         ]);
         ParserClass = Parser;
         InterpreterClass = Interpreter;
         utils = importedUtils;
     } else {
-        await new Promise((resolve) => setTimeout(resolve, 250));
+        await new Promise((resolve) => setTimeout(resolve, 250)); // あまりにも高速に切り替わると実行できてるのかわかりにくいので、最低250msはロード画面を挟む
     }
     if (!parser) {
         parser = new ParserClass();
@@ -49,7 +49,7 @@ async function run() {
     }
     interpreter = new InterpreterClass({}, {
         out: (value) => {
-            logs.value.push(value.type === 'num' ? value.value.toString() : value.type === 'str' ? value.value : utils.valToString(value));
+            logs.value.push(value.type === 'num' ? value.value.toString() : value.type === 'str' ? value.value : utils?.valToString(value) ?? '');
         },
     });
 
