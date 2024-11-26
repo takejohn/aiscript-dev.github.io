@@ -8,7 +8,7 @@
         </div>
         <div :class="$style.playgroundEditorPane">
             <div :class="$style.playgroundEditorScroller">
-                <div :class="$style.playgroundEditorHighlight" v-html="html"></div>
+                <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
                 <textarea
                     ref="inputEl"
                     v-model="code"
@@ -34,7 +34,7 @@
                     <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
                 </div>
             </div>
-            <div v-if="resultTab === 'output'" :class="[$style.playgroundResultContent, $style.playgroundResultLogs]">
+            <div ref="logEl" v-if="resultTab === 'output'" :class="[$style.playgroundResultContent, $style.playgroundResultLogs]">
                 <div
                     v-for="log in logs"
                     :key="log.text"
@@ -48,7 +48,7 @@
                 >{{ log.text }}</div>
             </div>
             <div v-else-if="resultTab === 'ast'" :class="$style.playgroundResultContent">
-                <pre>{{ JSON.stringify(ast, null, 2) }}</pre>
+                <div :class="$style.highlight" v-html="astHtml"></div>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { AISCRIPT_VERSION, Parser, Interpreter, utils, errors, type Ast } from '@syuilo/aiscript';
-import { ref, useTemplateRef, nextTick, onMounted, watch, computed } from 'vue';
+import { ref, useTemplateRef, nextTick, onMounted, watch } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
@@ -71,13 +71,14 @@ const code = ref(`for (let i, 100) {
 \t\telif (i % 5 == 0) "Buzz"
 \t\telse i
 }`);
-const html = ref('');
+const editorHtml = ref('');
 
 let highlighter: HighlighterCore | null = null;
 
 async function init() {
     highlighter = await createHighlighterCore({
         langs: [
+            import('shiki/langs/json.mjs'),
             import('aiscript-vscode/aiscript/syntaxes/aiscript.tmLanguage.json') as unknown as LanguageRegistration,
         ],
         themes: [
@@ -127,7 +128,7 @@ onMounted(async () => {
 
     watch(code, async (newCode) => {
         if (highlighter) {
-            html.value = highlighter.codeToHtml(newCode, {
+            editorHtml.value = highlighter.codeToHtml(newCode, {
                 lang: 'aiscript',
                 themes: {
                     light: 'github-light',
@@ -137,6 +138,19 @@ onMounted(async () => {
             });
         }
     }, { immediate: true });
+
+    watch(ast, async (newAst) => {
+        if (highlighter && newAst != null) {
+            astHtml.value = highlighter.codeToHtml(JSON.stringify(newAst, null, 2), {
+                lang: 'json',
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark',
+                },
+                defaultColor: false,
+            });
+        }
+    });
 });
 //#endregion
 
@@ -148,7 +162,10 @@ const logs = ref<{
     type?: 'info' | 'error';
     text: string;
 }[]>([]);
+const logEl = useTemplateRef('logEl');
+
 const ast = ref<Ast.Node[] | null>(null);
+const astHtml = ref('');
 
 function parse() {
     if (parser != null) {
@@ -211,6 +228,11 @@ async function run() {
                 text: `[Playground] Execution Completed in ${Math.round(endTime - startTime)}ms`,
                 type: 'info',
             });
+            if (resultTab.value === 'output' && logEl.value != null) {
+                logEl.value.scrollTo({
+                    top: logEl.value.scrollHeight,
+                });
+            }
         } catch (err) {
             if (err instanceof errors.AiScriptError) {
                 let errorName = 'AiScriptError';
@@ -256,6 +278,13 @@ function clearLog() {
     grid-template-columns: 1fr 1fr;
 }
 
+@media (max-width: 768px) {
+    .playgroundRoot {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr 1fr;
+    }
+}
+
 .playgroundHeader {
     grid-column: 1 / -1;
     border-bottom: 1px solid var(--vp-c-divider);
@@ -263,7 +292,6 @@ function clearLog() {
 
 .playgroundHeaderInner {
     margin: 0 auto;
-    max-width: var(--vp-layout-max-width);
     padding: 0.5em 32px;
     display: flex;
 }
@@ -322,20 +350,20 @@ function clearLog() {
     font-family: Consolas, Monaco, Andale Mono, Ubuntu Mono, monospace;
 }
 
-.playgroundEditorHighlight pre {
+.highlight pre {
     margin: 0;
 }
 
-.playgroundEditorHighlight span:global(.line) {
+.highlight span:global(.line) {
     display: inline-block;
     min-height: 1em;
 }
 
-:global(html.dark) .playgroundEditorHighlight span {
+:global(html.dark) .highlight span {
   color: var(--shiki-dark, inherit);
 }
 
-:global(html:not(.dark)) .playgroundEditorHighlight span {
+:global(html:not(.dark)) .highlight span {
   color: var(--shiki-light, inherit);
 }
 
