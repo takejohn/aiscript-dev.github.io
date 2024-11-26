@@ -9,6 +9,9 @@ export const shared = defineConfig({
 
     themeConfig: {
         logo: '/icons/aiscript_gd.svg',
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/aiscript-dev/aiscript' },
+        ],
     },
 
     head: [
