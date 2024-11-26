@@ -7,6 +7,7 @@ hero:
   text: "ブラウザで動く\nユーザースクリプト用言語"
   tagline: ユーザーが作成するプラグインやミニゲームを安全に作動
   image:
+    src: /icons/aiscript_gd.svg
     alt: AiScript
   actions:
     - theme: brand

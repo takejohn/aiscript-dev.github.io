@@ -7,6 +7,15 @@ export const shared = defineConfig({
     title: 'AiScript',
     srcDir: 'docs',
 
+    themeConfig: {
+        logo: '/icons/aiscript_gd.svg',
+    },
+
+    head: [
+        ['link', { rel: 'icon', href: '/favicon.ico' }],
+        ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }],
+    ],
+
     markdown: {
         math: true,
         codeTransformers: [

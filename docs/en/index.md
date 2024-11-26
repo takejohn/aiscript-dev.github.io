@@ -4,9 +4,10 @@ layout: home
 
 hero:
   name: AiScript
-  text: "Script language\nthat runs in the browser"
-  tagline: Safely run user-created scripts
+  text: "Script language, \nbut it runs in the browser"
+  tagline: Perfect for user-created plugins and mini-games
   image:
+    src: /icons/aiscript_gd.svg
     alt: AiScript
   actions:
     - theme: brand
