@@ -360,11 +360,13 @@ if answer == 42 {
 if ({ a: true }.a) print('ok')
 // 式として使用可能
 <: `{if answer == 42 "collect answer"}`
-// else, elifも使用可能
+// else, elif, else ifも使用可能
 let result = if answer == "bebeyo" {
 	"correct answer"
 } elif answer == "ai" {
 	"kawaii"
+} else if answer == "hoge" {
+	"fuga"
 } else {
 	"wrong answer"
 }

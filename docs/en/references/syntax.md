@@ -360,11 +360,13 @@ if answer == 42 {
 if ({ a: true }.a) print('ok')
 // Can be used as an expression
 <: `{if answer == 42 "collect answer"}`
-// else, elif can also be used
+// else, elif, else if can also be used
 let result = if answer == "bebeyo" {
 	"correct answer"
 } elif answer == "ai" {
 	"kawaii"
+} else if answer == "hoge" {
+	"fuga"
 } else {
 	"wrong answer"
 }
