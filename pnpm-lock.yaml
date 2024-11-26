@@ -14,6 +14,9 @@ importers:
       aiscript-vscode:
         specifier: github:aiscript-dev/aiscript-vscode#v0.1.11
         version: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/e1e1b27f2f72cd28a473e004b6da0d8fc0bd40d9
+      lz-string:
+        specifier: ^1.5.0
+        version: 1.5.0
       markdown-it-mathjax3:
         specifier: ^4.3.2
         version: 4.3.2
@@ -662,6 +665,10 @@ packages:
   juice@8.1.0:
     resolution: {integrity: sha512-FLzurJrx5Iv1e7CfBSZH68dC04EEvXvvVvPYB7Vx1WAuhCp1ZPIMtqxc+WTWxVkpTIC2Ach/GAv0rQbtGf6YMA==}
     engines: {node: '>=10.0.0'}
+    hasBin: true
+
+  lz-string@1.5.0:
+    resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
     hasBin: true
 
   magic-string@0.30.13:
@@ -1606,6 +1613,8 @@ snapshots:
       web-resource-inliner: 6.0.1
     transitivePeerDependencies:
       - encoding
+
+  lz-string@1.5.0: {}
 
   magic-string@0.30.13:
     dependencies:

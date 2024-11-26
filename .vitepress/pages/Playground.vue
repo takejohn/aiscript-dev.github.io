@@ -6,32 +6,42 @@
                 <div :class="$style.playgroundOptions"></div>
             </div>
         </div>
-        <div :class="$style.playgroundEditorPane">
-            <div :class="$style.playgroundEditorScroller">
-                <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
-                <textarea
-                    ref="inputEl"
-                    v-model="code"
-                    @input="onInput"
-                    @keydown="onKeydown"
-                    autocomplete="off"
-                    wrap="off"
-                    spellcheck="false"
-                    :class="$style.playgroundEditorTextarea"
-                ></textarea>
+        <div :class="[$style.playgroundPaneRoot, $style.playgroundEditorPane]">
+            <div :class="$style.playgroundPaneHeader">
+                <div :class="$style.playgroundResultActionsLeft">
+                    <button :class="$style.playgroundButton" @click="replaceWithFizzbuzz">Fizzbuzz</button>
+                </div>
+                <div :class="$style.playgroundResultActionsRight">
+                    <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
+                </div>
+            </div>
+
+            <div :class="$style.playgroundEditorRoot">
+                <div :class="$style.playgroundEditorScroller">
+                    <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
+                    <textarea
+                        ref="inputEl"
+                        v-model="code"
+                        @input="onInput"
+                        @keydown="onKeydown"
+                        autocomplete="off"
+                        wrap="off"
+                        spellcheck="false"
+                        :class="$style.playgroundEditorTextarea"
+                    ></textarea>
+                </div>
             </div>
         </div>
-        <div :class="$style.playgroundResultPaneRoot">
-            <div :class="$style.playgroundResultPaneHeader">
+        <div :class="$style.playgroundPaneRoot">
+            <div :class="$style.playgroundPaneHeader">
                 <div :class="$style.playgroundResultTabs">
                     <input type="radio" id="output" v-model="resultTab" value="output">
                     <label for="output">Output</label>
                     <input type="radio" id="ast" v-model="resultTab" value="ast">
                     <label for="ast">AST</label>
                 </div>
-                <div :class="$style.playgroundResultActions">
+                <div :class="$style.playgroundResultActionsRight">
                     <button :class="[$style.playgroundButton]" @click="clearLog">Clear</button>
-                    <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
                 </div>
             </div>
             <div ref="logEl" v-if="resultTab === 'output'" :class="[$style.playgroundResultContent, $style.playgroundResultLogs]">
@@ -56,21 +66,26 @@
 
 <script setup lang="ts">
 import { AISCRIPT_VERSION, Parser, Interpreter, utils, errors, type Ast } from '@syuilo/aiscript';
-import { ref, useTemplateRef, nextTick, onMounted, watch } from 'vue';
+import { ref, computed, useTemplateRef, nextTick, onMounted, watch } from 'vue';
+import { useRouter } from 'vitepress';
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
+import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import { useThrottle } from '../scripts/throttle';
+
+const fizzbuzz = `for (let i, 100) {
+\t<: if (i % 15 == 0) "FizzBuzz"
+\t\telif (i % 3 == 0) "Fizz"
+\t\telif (i % 5 == 0) "Buzz"
+\t\telse i
+}`;
 
 const resultTab = ref<'output' | 'ast'>('output');
 
 //#region Editor
 const inputEl = useTemplateRef('inputEl');
-const code = ref(`for (let i, 100) {
-\t<: if (i % 15 == 0) "FizzBuzz"
-\t\telif (i % 3 == 0) "Fizz"
-\t\telif (i % 5 == 0) "Buzz"
-\t\telse i
-}`);
+const code = ref(fizzbuzz);
 const editorHtml = ref('');
 
 let highlighter: HighlighterCore | null = null;
@@ -123,35 +138,9 @@ function onKeydown(ev: KeyboardEvent) {
     }
 }
 
-onMounted(async () => {
-    await init();
-
-    watch(code, async (newCode) => {
-        if (highlighter) {
-            editorHtml.value = highlighter.codeToHtml(newCode, {
-                lang: 'aiscript',
-                themes: {
-                    light: 'github-light',
-                    dark: 'github-dark',
-                },
-                defaultColor: false,
-            });
-        }
-    }, { immediate: true });
-
-    watch(ast, async (newAst) => {
-        if (highlighter && newAst != null) {
-            astHtml.value = highlighter.codeToHtml(JSON.stringify(newAst, null, 2), {
-                lang: 'json',
-                themes: {
-                    light: 'github-light',
-                    dark: 'github-dark',
-                },
-                defaultColor: false,
-            });
-        }
-    });
-});
+function replaceWithFizzbuzz() {
+    code.value = fizzbuzz;
+}
 //#endregion
 
 //#region Runner
@@ -172,7 +161,6 @@ function parse() {
         try {
             const _ast = parser.parse(code.value);
             logs.value = [];
-            console.log(_ast);
             ast.value = _ast;
         } catch (err) {
             if (err instanceof errors.AiScriptError) {
@@ -203,14 +191,6 @@ function initAiScriptEnv() {
         },
     });
 }
-
-onMounted(() => {
-    initAiScriptEnv();
-
-    watch(code, () => {
-        parse();
-    }, { immediate: true });
-});
 
 async function run() {
     console.log('run');
@@ -268,6 +248,66 @@ function clearLog() {
     logs.value = [];
 }
 //#endregion
+
+//#region Permalink with hash
+type HashData = {
+    code: string;
+};
+const hash = ref<string | null>(import.meta.env.SSR ? null : window.location.hash.slice(1) || localStorage.getItem('ais:playground'));
+const hashData = computed<HashData | null>(() => {
+    if (hash.value == null) return null;
+    try {
+        return JSON.parse(decompressFromEncodedURIComponent(hash.value));
+    } catch {
+        return null;
+    }
+});
+const updateHash = useThrottle((d: HashData) => {
+    hash.value = compressToEncodedURIComponent(JSON.stringify(d));
+    localStorage.setItem('ais:playground', hash.value);
+    const currentHistoryPayload = window.history.state;
+    window.history.replaceState(currentHistoryPayload, '', '#' + hash.value);
+}, 250);
+//#endregion
+
+onMounted(async () => {
+    await init();
+    initAiScriptEnv();
+
+    if (hashData.value != null && hashData.value.code != null) {
+        code.value = hashData.value.code;
+    }
+    watch([code], () => {
+        updateHash({ code: code.value });
+    }, { immediate: true });
+
+    watch(code, async (newCode) => {
+        parse();
+        if (highlighter) {
+            editorHtml.value = highlighter.codeToHtml(newCode, {
+                lang: 'aiscript',
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark',
+                },
+                defaultColor: false,
+            });
+        }
+    }, { immediate: true });
+
+    watch(ast, async (newAst) => {
+        if (highlighter && newAst != null) {
+            astHtml.value = highlighter.codeToHtml(JSON.stringify(newAst, null, 2), {
+                lang: 'json',
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark',
+                },
+                defaultColor: false,
+            });
+        }
+    });
+});
 </script>
 
 <style module>
@@ -278,13 +318,6 @@ function clearLog() {
     grid-template-columns: 1fr 1fr;
 }
 
-@media (max-width: 768px) {
-    .playgroundRoot {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr 1fr;
-    }
-}
-
 .playgroundHeader {
     grid-column: 1 / -1;
     border-bottom: 1px solid var(--vp-c-divider);
@@ -292,7 +325,7 @@ function clearLog() {
 
 .playgroundHeaderInner {
     margin: 0 auto;
-    padding: 0.5em 32px;
+    padding: 0.5em 36px;
     display: flex;
 }
 
@@ -300,9 +333,24 @@ function clearLog() {
     margin-left: auto;
 }
 
+.playgroundPaneRoot {
+    display: grid;
+    grid-template-rows: 40px 1fr;
+    min-height: 0;
+}
+
+.playgroundPaneHeader {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--vp-c-divider);
+}
+
 .playgroundEditorPane {
-    position: relative;
     border-right: 1px solid var(--vp-c-divider);
+}
+
+.playgroundEditorRoot {
+    position: relative;
     overflow: scroll;
 }
 
@@ -367,18 +415,6 @@ function clearLog() {
   color: var(--shiki-light, inherit);
 }
 
-.playgroundResultPaneRoot {
-    display: grid;
-    grid-template-rows: 40px 1fr;
-    min-height: 0;
-}
-
-.playgroundResultPaneHeader {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--vp-c-divider);
-}
-
 .playgroundResultTabs {
     display: flex;
 }
@@ -402,13 +438,21 @@ function clearLog() {
     border-bottom-color: var(--vp-c-brand-1);
 }
 
-.playgroundResultActions {
+.playgroundResultActionsLeft {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    padding-left: 36px;
+}
+
+.playgroundResultActionsRight {
     display: flex;
     gap: 8px;
     align-items: center;
 
     margin-left: auto;
-    padding-right: 32px;
+    padding-right: 36px;
 }
 
 .playgroundResultContent {
@@ -475,5 +519,34 @@ function clearLog() {
 .playgroundButtonPrimary:hover {
     color: var(--vp-button-brand-hover-text);
     background-color: var(--vp-button-brand-hover-bg);
+}
+
+@media (max-width: 768px) {
+    .playgroundEditorScroller,
+    .playgroundEditorTextarea {
+        padding: 24px 24px;
+    }
+
+    .playgroundHeaderInner {
+        padding: 0.5em 24px;
+    }
+
+    .playgroundResultActionsLeft {
+        padding-left: 24px;
+    }
+
+    .playgroundResultActionsRight {
+        padding-right: 24px;
+    }
+
+    .playgroundRoot {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr 1fr;
+    }
+
+    .playgroundEditorPane {
+        border-right: 0;
+        border-bottom: 1px solid var(--vp-c-divider);
+    }
 }
 </style>
