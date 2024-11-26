@@ -180,7 +180,7 @@ if (a == b) {
 }
 ```
 
-Chain multiple conditions using `elif`:
+Chain multiple conditions using `elif` (or `else if`):
 
 ```aiscript
 if (a == b) {
