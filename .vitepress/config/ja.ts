@@ -41,5 +41,18 @@ export const ja = defineConfig({
             },
             '/ja/references/': { base: '/ja/references/', items: referenceNav },
         },
+
+        docFooter: {
+            prev: '前のページ',
+            next: '次のページ',
+        },
+        outline: {
+            label: '目次',
+        },
+        darkModeSwitchLabel: 'ダークモード',
+        lightModeSwitchTitle: 'ライトモードに切り替え',
+        darkModeSwitchTitle: 'ダークモードに切り替え',
+        sidebarMenuLabel: 'メニュー',
+        returnToTopLabel: 'ページの先頭に戻る',    
     },
 });
