@@ -12,6 +12,7 @@
                     <button :class="$style.playgroundButton" @click="replaceWithFizzbuzz">Fizzbuzz</button>
                 </div>
                 <div :class="$style.playgroundResultActionsRight">
+                    <button :class="$style.playgroundButton" :disabled="!isRunning" @click="abort">Abort</button>
                     <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
                 </div>
             </div>
@@ -66,8 +67,7 @@
 
 <script setup lang="ts">
 import { AISCRIPT_VERSION, Parser, Interpreter, utils, errors, type Ast } from '@syuilo/aiscript';
-import { ref, computed, useTemplateRef, nextTick, onMounted, watch } from 'vue';
-import { useRouter } from 'vitepress';
+import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
@@ -147,6 +147,8 @@ function replaceWithFizzbuzz() {
 let parser: Parser | null = null;
 let interpreter: Interpreter | null = null;
 
+const isRunning = ref(false);
+
 const logs = ref<{
     type?: 'info' | 'error';
     text: string;
@@ -198,14 +200,16 @@ async function run() {
 
     resultTab.value = 'output';
     logs.value = [];
+    isRunning.value = true;
+
     parse();
     if (ast.value != null && interpreter !== null) {
         try {
-            const startTime = performance.now();
+            const execStartTime = performance.now();
             await interpreter.exec(ast.value);
-            const endTime = performance.now();
+            const execEndTime = performance.now();
             logs.value.push({
-                text: `[Playground] Execution Completed in ${Math.round(endTime - startTime)}ms`,
+                text: `[Playground] Execution Completed in ${Math.round(execEndTime - execStartTime)}ms`,
                 type: 'info',
             });
             if (resultTab.value === 'output' && logEl.value != null) {
@@ -239,7 +243,19 @@ async function run() {
                     type: 'error',
                 });
             }
+        } finally {
+            isRunning.value = false;
         }
+    }
+}
+
+function abort() {
+    if (interpreter != null) {
+        interpreter.abort();
+        logs.value.push({
+            text: '[Playground] Execution Aborted',
+            type: 'info',
+        });
     }
 }
 
@@ -307,6 +323,12 @@ onMounted(async () => {
             });
         }
     });
+});
+
+onUnmounted(() => {
+    if (interpreter != null) {
+        interpreter.abort();
+    }
 });
 </script>
 
