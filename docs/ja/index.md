@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "AiScript"
-  text: "ブラウザで動く\nユーザースクリプト用言語"
-  tagline: ユーザーが作成するプラグインやミニゲームを安全に作動
+  text: "JavaScript上で動く、\nWeb時代のための\nユーザースクリプト言語"
+  tagline: ユーザーが作成するプラグインやミニゲームをブラウザ上で安全に動作可能
   image:
     src: /icons/aiscript_gd.svg
     alt: AiScript
@@ -23,7 +23,7 @@ features:
     details: JavaScriptに似た構文を採用しており、初学者でも簡単に学べます。
   - icon: 🏝️
     title: サンドボックス環境で安全
-    details: 動作はすべてAiScriptランタイム上で完結。無限ループを組まれても、ホストのJavascript環境には影響しません。
+    details: 動作はすべてAiScriptランタイム上で完結。無限ループを組まれても、ホストのJavascript環境に影響はありません。
   - icon: 🧩
     title: 簡単に拡張可能
     details: AiScriptは簡単にカスタマイズ可能！定数を注入したり、関数を注入したりして、動作を拡張できます。

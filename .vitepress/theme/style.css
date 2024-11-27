@@ -111,6 +111,11 @@
   :root {
     --vp-home-hero-image-filter: blur(68px);
   }
+
+  .VPHomeHero .text {
+    line-height: 56px;
+    font-size: 48px;
+  }  
 }
 
 /**
