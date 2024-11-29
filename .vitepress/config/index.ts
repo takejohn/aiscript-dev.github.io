@@ -18,7 +18,7 @@ export default defineConfig({
         const head: HeadConfig[] = [ ...context.head ];
         if (!context.pageData.isNotFound) {
             const localesRegex = new RegExp(`^/(${Object.keys(locales).join('|')})`);
-            const canonical = '/' + context.page.replace(/(index)?\.md$/, '');
+            const canonical = '/' + context.page.replace(/\.md$/, '.html').replace(/\/index\.html$/, '/');
     
             for (const locale of Object.keys(locales)) {
                 const localePath = canonical.replace(localesRegex, `/${locale}`);
