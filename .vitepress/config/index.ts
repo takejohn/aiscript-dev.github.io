@@ -15,7 +15,7 @@ export default defineConfig({
     ...shared,
     locales,
     transformHead(context) {
-        const head: HeadConfig[] = [ ...context.head ];
+        const head: HeadConfig[] = [];
         if (!context.pageData.isNotFound) {
             const localesRegex = new RegExp(`^/(${Object.keys(locales).join('|')})`);
             const canonical = '/' + context.page.replace(/\.md$/, '.html').replace(/\/index\.html$/, '/');
