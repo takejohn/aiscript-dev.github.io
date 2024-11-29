@@ -75,6 +75,7 @@ import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 import lzString from 'lz-string';
 import { useThrottle } from '../scripts/throttle';
 
+// lz-stringがCommonJSモジュールだったみたいなので
 const { compressToEncodedURIComponent, decompressFromEncodedURIComponent } = lzString;
 
 const fizzbuzz = `for (let i, 100) {
@@ -271,6 +272,7 @@ function clearLog() {
 //#region Permalink with hash
 type HashData = {
     code: string;
+    // TODO: バージョン情報（マルチバージョン対応の際に必要。なければ最新にフォールバック）
 };
 const hash = ref<string | null>(inBrowser ? window.location.hash.slice(1) || localStorage.getItem('ais:playground') : null);
 const hashData = computed<HashData | null>(() => {
