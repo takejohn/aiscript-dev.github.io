@@ -71,8 +71,10 @@ import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted 
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import lzString from 'lz-string';
 import { useThrottle } from '../scripts/throttle';
+
+const { compressToEncodedURIComponent, decompressFromEncodedURIComponent } = lzString;
 
 const fizzbuzz = `for (let i, 100) {
 \t<: if (i % 15 == 0) "FizzBuzz"
