@@ -1,6 +1,8 @@
 <template>
-    <DefaultTheme.Layout />
-    <div v-if="!loaded" :class="$style.w"></div>
+    <div>
+        <DefaultTheme.Layout />
+        <div v-if="!loaded" :class="$style.w"></div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -14,7 +16,7 @@ const loaded = ref(false);
 
 const locales = Object.keys(data.site.value.locales) as string[];
 const localesRegex = new RegExp(`^/(${locales.join('|')})`);
-const savedLocale = localStorage.getItem('ais:locale');
+const savedLocale = inBrowser ? localStorage.getItem('ais:locale') : null;
 
 if (inBrowser) {
     if (!localesRegex.test(route.path)) {

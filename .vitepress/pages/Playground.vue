@@ -272,7 +272,7 @@ function clearLog() {
 type HashData = {
     code: string;
 };
-const hash = ref<string | null>(inBrowser ? null : window.location.hash.slice(1) || localStorage.getItem('ais:playground'));
+const hash = ref<string | null>(inBrowser ? window.location.hash.slice(1) || localStorage.getItem('ais:playground') : null);
 const hashData = computed<HashData | null>(() => {
     if (hash.value == null) return null;
     try {
