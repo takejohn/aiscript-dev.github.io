@@ -67,6 +67,7 @@
 
 <script setup lang="ts">
 import { AISCRIPT_VERSION, Parser, Interpreter, utils, errors, type Ast } from '@syuilo/aiscript';
+import { inBrowser } from 'vitepress';
 import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
@@ -271,7 +272,7 @@ function clearLog() {
 type HashData = {
     code: string;
 };
-const hash = ref<string | null>(import.meta.env.SSR ? null : window.location.hash.slice(1) || localStorage.getItem('ais:playground'));
+const hash = ref<string | null>(inBrowser ? null : window.location.hash.slice(1) || localStorage.getItem('ais:playground'));
 const hashData = computed<HashData | null>(() => {
     if (hash.value == null) return null;
     try {
