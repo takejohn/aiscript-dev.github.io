@@ -16,18 +16,18 @@ const locales = Object.keys(data.site.value.locales) as string[];
 const localesRegex = new RegExp(`^/(${locales.join('|')})`);
 const savedLocale = localStorage.getItem('ais:locale');
 
-if (inBrowser && !localesRegex.test(route.path)) {
-    if (savedLocale != null && locales.includes(savedLocale)) {
-        location.replace('/' + savedLocale + location.pathname + location.search);
-    } else if (locales.includes(navigator.language.split('-')[0])) {
-        location.replace('/' + navigator.language.split('-')[0] + location.pathname + location.search);
-    } else {
-        location.replace('/ja' + location.pathname + location.search);
-    }
-}
-
 if (inBrowser) {
-    loaded.value = true;
+    if (!localesRegex.test(route.path)) {
+        if (savedLocale != null && locales.includes(savedLocale)) {
+            location.replace('/' + savedLocale + location.pathname + location.search);
+        } else if (locales.includes(navigator.language.split('-')[0])) {
+            location.replace('/' + navigator.language.split('-')[0] + location.pathname + location.search);
+        } else {
+            location.replace('/ja' + location.pathname + location.search);
+        }
+    } else {
+        loaded.value = true;
+    }
 }
 
 watch(data.lang, (lang) => {
