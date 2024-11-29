@@ -195,6 +195,13 @@ function initAiScriptEnv() {
                 text: value.type === 'num' ? value.value.toString() : value.type === 'str' ? `"${value.value}"` : JSON.stringify(utils.valToJs(value), null, 2) ?? '',
             });
         },
+        log: (type, params) => {
+            if (type === 'end' && params.val != null && 'type' in params.val) {
+                logs.value.push({
+                    text: utils.valToString(params.val, true),
+                });
+            }
+        },
     });
 }
 
