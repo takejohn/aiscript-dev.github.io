@@ -6,6 +6,7 @@
     "build": "vitepress build",
     "preview": "vitepress preview"
   },
+  "packageManager": "pnpm@9.14.3",
   "devDependencies": {
     "@syuilo/aiscript": "dev",
     "aiscript-vscode": "github:aiscript-dev/aiscript-vscode#v0.1.11",
