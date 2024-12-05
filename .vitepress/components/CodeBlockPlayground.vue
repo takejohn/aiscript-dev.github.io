@@ -23,8 +23,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { utils, errors } from '@syuilo/aiscript';
-import type { Interpreter, Parser } from '@syuilo/aiscript';
+import { Parser, Interpreter, utils, errors } from '@syuilo/aiscript';
 
 const props = defineProps<{
     code: string;
@@ -35,9 +34,6 @@ const logs = ref<{
     type?: 'error' | 'info';
 }[]>([]);
 const loading = ref(false);
-
-let ParserClass: typeof Parser | null = null;
-let InterpreterClass: typeof Interpreter | null = null;
 
 let parser: Parser | null = null;
 let interpreter: Interpreter | null = null;
@@ -55,27 +51,16 @@ async function run() {
         type: 'info',
     }];
 
-    if (!ParserClass || !InterpreterClass) {
-        const [
-            { Parser, Interpreter },
-        ] = await Promise.all([
-            import('@syuilo/aiscript'),
-            new Promise((resolve) => setTimeout(resolve, 250)), // あまりにも高速に切り替わると実行できてるのかわかりにくいので、最低250msはロード画面を挟む
-        ]);
-        ParserClass = Parser;
-        InterpreterClass = Interpreter;
-    } else {
-        await new Promise((resolve) => setTimeout(resolve, 250)); // あまりにも高速に切り替わると実行できてるのかわかりにくいので、最低250msはロード画面を挟む
-    }
+    await new Promise((resolve) => setTimeout(resolve, 250)); // あまりにも高速に切り替わると実行できてるのかわかりにくいので、最低250msはロード画面を挟む
 
     if (!parser) {
-        parser = new ParserClass();
+        parser = new Parser();
     }
     if (interpreter) {
         interpreter.abort();
     }
 
-    interpreter = new InterpreterClass({}, {
+    interpreter = new Interpreter({}, {
         out: (value) => {
             logs.value.push({
                 text: value.type === 'num' ? value.value.toString() : value.type === 'str' ? `"${value.value}"` : JSON.stringify(utils.valToJs(value), null, 2) ?? '',
