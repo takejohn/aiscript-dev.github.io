@@ -1,7 +1,7 @@
 import { defineConfig, type DefaultTheme } from 'vitepress';
 
 const nav: DefaultTheme.NavItem[] = [
-    { text: 'Guides', link: '/en/guides/get-started' },
+    { text: 'Guide', link: '/en/guides/get-started' },
     { text: 'Reference', link: '/en/references/syntax' },
     { text: 'Try AiScript', link: '/en/playground' },
 ];
@@ -15,7 +15,7 @@ const guideNav: DefaultTheme.SidebarItem[] = [
             { text: 'Implement to Your App', link: 'implementation' },
         ],
     },
-    { text: 'References', base: '/en/references/', link: 'syntax' },
+    { text: 'Reference', base: '/en/references/', link: 'syntax' },
 ];
 
 const referenceNav: DefaultTheme.SidebarItem[] = [
