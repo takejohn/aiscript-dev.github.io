@@ -1,15 +1,20 @@
 import { defineConfig } from 'vitepress';
 import type { LocaleConfig, DefaultTheme, HeadConfig } from 'vitepress';
+
 import { shared } from './shared';
 import { ja } from './ja';
 import { en } from './en';
 
-const locales: LocaleConfig<DefaultTheme.Config> = {
+import { genI18nRedirector } from '../scripts/gen-i18n-redirector';
+
+const locales = {
     ja: { label: '日本語', ...ja },
     en: { label: 'English', ...en },
-};
+} as const satisfies LocaleConfig<DefaultTheme.Config>;
 
-const baseUrl = 'https://aiscript-dev.github.io';
+export const mainLocale = 'ja' as const satisfies keyof typeof locales;
+
+export const baseUrl = 'https://aiscript-dev.github.io';
 
 export default defineConfig({
     ...shared,
@@ -44,4 +49,5 @@ export default defineConfig({
 
         return head;
     },
+    buildEnd: genI18nRedirector,
 });
