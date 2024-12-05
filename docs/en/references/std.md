@@ -1,3 +1,7 @@
+---
+outline: [2, 3]
+---
+
 # Standard Constants / Functions
 Refers to constants/functions that are defined in Aiscript from the beginning and can be used anywhere.  
 They are also called std constants/functions without standard.
