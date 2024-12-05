@@ -1,4 +1,3 @@
-//@ts-expect-error Node
 import fs from 'fs';
 import { mainLocale, baseUrl } from '../config';
 import type { SiteConfig } from 'vitepress';
@@ -31,7 +30,7 @@ export async function genI18nRedirector(siteConfig: SiteConfig) {
     ${linkAlternate}
     <link rel="alternate" hreflang="x-default" href="${baseUrl}/${mainLocale}/${routeForRender}">
     <link rel="canonical" href="${baseUrl}/${mainLocale}/${routeForRender}">
-    <script type="text/javascript">const s = ${JSON.stringify(localeNames)}; const d = localStorage.getItem('ais:locale'); if (d) { location.replace('/' + d + location.pathname + location.search); } else if (s.includes(navigator.language.split("-")[0])) { location.replace('/' + navigator.language.split("-")[0] + location.pathname + location.search); } else { location.replace('/ja' + location.pathname + location.search); }</script>
+    <script type="text/javascript">const s = ${JSON.stringify(localeNames)}; const d = localStorage.getItem('ais:locale'); if (d) { location.replace('/' + d + location.pathname + location.search + location.hash); } else if (s.includes(navigator.language.split("-")[0])) { location.replace('/' + navigator.language.split("-")[0] + location.pathname + location.search + location.hash); } else { location.replace('/ja' + location.pathname + location.search + location.hash); }</script>
 </head>
 <body>
     <noscript>${fallbackLinks}</noscript>
