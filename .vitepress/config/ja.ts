@@ -74,7 +74,7 @@ export const jaSearchLocale: NonNullable<DefaultTheme.LocalSearchOptions['transl
             navigateUpKeyAriaLabel: '上矢印キー',
             navigateDownKeyAriaLabel: '下矢印キー',
             closeText: 'で閉じる',
-            closeKeyAriaLabel: '閉じる',
+            closeKeyAriaLabel: 'Escキー',
         },
     },
 };
