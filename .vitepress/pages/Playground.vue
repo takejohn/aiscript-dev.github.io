@@ -104,7 +104,7 @@ async function init() {
             import('shiki/themes/github-light.mjs'),
             import('shiki/themes/github-dark.mjs'),
         ],
-        engine: createOnigurumaEngine(import('shiki/wasm')),
+        engine: createOnigurumaEngine(import('shiki/onig.wasm?init')),
     });
 }
 
