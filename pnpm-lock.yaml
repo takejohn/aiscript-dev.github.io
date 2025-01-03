@@ -12,8 +12,8 @@ importers:
         specifier: dev
         version: 1.0.0-dev.20241226
       aiscript-vscode:
-        specifier: github:aiscript-dev/aiscript-vscode#v0.1.14
-        version: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/b8ec99ac732acf9d67ba574d8db7c7f2451f99da
+        specifier: github:aiscript-dev/aiscript-vscode#v0.1.15
+        version: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7
       lz-string:
         specifier: ^1.5.0
         version: 1.5.0
@@ -687,9 +687,9 @@ packages:
   '@vueuse/shared@11.3.0':
     resolution: {integrity: sha512-P8gSSWQeucH5821ek2mn/ciCk+MS/zoRKqdQIM3bHq6p7GXDAJLmnRRKmF5F65sAVJIfzQlwR3aDzwCn10s8hA==}
 
-  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/b8ec99ac732acf9d67ba574d8db7c7f2451f99da:
-    resolution: {tarball: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/b8ec99ac732acf9d67ba574d8db7c7f2451f99da}
-    version: 0.1.14
+  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
+    resolution: {tarball: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7}
+    version: 0.1.15
     engines: {vscode: ^1.83.0}
 
   algoliasearch@5.18.0:
@@ -1724,7 +1724,7 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/b8ec99ac732acf9d67ba574d8db7c7f2451f99da:
+  aiscript-vscode@https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/c3cde89e79a41d93540cf8a48cd619c3f2dcb1b7:
     dependencies:
       '@aiscript-dev/aiscript-languageserver': https://github.com/aiscript-dev/aiscript-languageserver/releases/download/0.1.6/aiscript-dev-aiscript-languageserver-0.1.6.tgz
       vscode-languageclient: 9.0.1
