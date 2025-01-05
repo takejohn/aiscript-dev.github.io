@@ -9,16 +9,16 @@
         <div :class="[$style.playgroundPaneRoot, $style.playgroundEditorPane]">
             <div :class="$style.playgroundPaneHeader">
                 <div :class="$style.playgroundResultActionsLeft">
-                    <button :class="$style.playgroundButton" @click="replaceWithFizzbuzz">Fizzbuzz</button>
+                    <button :class="$style.playgroundButton" :disabled="editorLoading" @click="replaceWithFizzbuzz">Fizzbuzz</button>
                 </div>
                 <div :class="$style.playgroundResultActionsRight">
                     <button :class="$style.playgroundButton" :disabled="!isRunning" @click="abort">Abort</button>
-                    <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" @click="run">Run</button>
+                    <button :class="[$style.playgroundButton, $style.playgroundButtonPrimary]" :disabled="editorLoading" @click="run">Run</button>
                 </div>
             </div>
 
             <div :class="$style.playgroundEditorRoot">
-                <div :class="$style.playgroundEditorScroller">
+                <div :class="$style.playgroundEditorScroller" :inert="editorLoading">
                     <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
                     <textarea
                         ref="inputEl"
@@ -31,6 +31,9 @@
                         :class="$style.playgroundEditorTextarea"
                     ></textarea>
                 </div>
+                <div v-if="editorLoading" :class="$style.playgroundEditorLoading">
+                    <div>Loading...</div>
+                </div>
             </div>
         </div>
         <div :class="$style.playgroundPaneRoot">
@@ -40,6 +43,8 @@
                     <label for="output">Output</label>
                     <input type="radio" id="ast" v-model="resultTab" value="ast">
                     <label for="ast">AST</label>
+                    <input type="radio" id="metadata" v-model="resultTab" value="metadata">
+                    <label for="metadata">Metadata</label>
                 </div>
                 <div :class="$style.playgroundResultActionsRight">
                     <button :class="[$style.playgroundButton]" @click="clearLog">Clear</button>
@@ -59,7 +64,19 @@
                 >{{ log.text }}</div>
             </div>
             <div v-else-if="resultTab === 'ast'" :class="$style.playgroundResultContent">
-                <div :class="$style.highlight" v-html="astHtml"></div>
+                <div v-if="isSyntaxError" class="danger custom-block">
+                    <p class="custom-block-title">Syntax Error</p>
+                    <p>See Output tab for details</p>
+                </div>
+                <div v-else :class="$style.highlight" v-html="astHtml"></div>
+            </div>
+            <div v-else-if="resultTab === 'metadata'" :class="$style.playgroundResultContent">
+                <div v-if="isSyntaxError" class="danger custom-block">
+                    <p class="custom-block-title">Syntax Error</p>
+                    <p>See Output tab for details</p>
+                </div>
+                <div v-else-if="metadata" :class="$style.highlight" v-html="metadataHtml"></div>
+                <div v-else>No metadata</div>
             </div>
         </div>
     </div>
@@ -85,9 +102,10 @@ const fizzbuzz = `for (let i, 100) {
 \t\telse i
 }`;
 
-const resultTab = ref<'output' | 'ast'>('output');
+const resultTab = ref<'output' | 'ast' | 'metadata'>('output');
 
 //#region Editor
+const editorLoading = ref(true);
 const inputEl = useTemplateRef('inputEl');
 const code = ref(fizzbuzz);
 const editorHtml = ref('');
@@ -159,23 +177,35 @@ const logs = ref<{
 }[]>([]);
 const logEl = useTemplateRef('logEl');
 
+const isSyntaxError = ref(false);
+
 const ast = ref<Ast.Node[] | null>(null);
 const astHtml = ref('');
 
+const metadata = ref<unknown>(null);
+const metadataHtml = ref('');
+
 function parse() {
+    isSyntaxError.value = false;
+
     if (parser != null) {
         try {
             const _ast = parser.parse(code.value);
             logs.value = [];
             ast.value = _ast;
+
+            const meta = Interpreter.collectMetadata(_ast);
+            metadata.value = meta?.get(null) ?? null;
         } catch (err) {
             if (err instanceof errors.AiScriptError) {
                 logs.value = [{
                     text: `[SyntaxError] ${err.name}: ${err.message}`,
                     type: 'error',
                 }];
+                isSyntaxError.value = true;
             }
             ast.value = null;
+            metadata.value = null;
         }
     } else {
         ast.value = null;
@@ -299,6 +329,8 @@ const updateHash = useThrottle((d: HashData) => {
 //#endregion
 
 onMounted(async () => {
+    const loadStartedAt = Date.now();
+
     await init();
     initAiScriptEnv();
 
@@ -324,7 +356,12 @@ onMounted(async () => {
     }, { immediate: true });
 
     watch(ast, async (newAst) => {
-        if (highlighter && newAst != null) {
+        if (highlighter) {
+            if (newAst == null) {
+                astHtml.value = '';
+                return;
+            }
+
             astHtml.value = highlighter.codeToHtml(JSON.stringify(newAst, null, 2), {
                 lang: 'json',
                 themes: {
@@ -334,7 +371,31 @@ onMounted(async () => {
                 defaultColor: false,
             });
         }
-    });
+    }, { immediate: true });
+
+    watch(metadata, async (newMetadata) => {
+        if (highlighter) {
+            if (newMetadata == null) {
+                metadataHtml.value = '';
+                return;
+            }
+
+            metadataHtml.value = highlighter.codeToHtml(JSON.stringify(newMetadata, null, 2), {
+                lang: 'json',
+                themes: {
+                    light: 'github-light',
+                    dark: 'github-dark',
+                },
+                defaultColor: false,
+            });
+        }
+    }, { immediate: true });
+
+    const loadEndedAt = Date.now();
+
+    setTimeout(() => {
+        editorLoading.value = false;
+    }, Math.max(0, 500 - (loadEndedAt - loadStartedAt)));
 });
 
 onUnmounted(() => {
@@ -386,6 +447,19 @@ onUnmounted(() => {
 .playgroundEditorRoot {
     position: relative;
     overflow: scroll;
+}
+
+.playgroundEditorLoading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .playgroundEditorScroller {
