@@ -324,24 +324,26 @@ See the table below for which functions they are replaced with.
 ### List of Operators
 The higher the precedence, the higher it is in the table. (Some have the same precedence)  
 <table>
-	<tr><th>Operator</th><th>Corresponding Function</th><th>Meaning</th></tr>
-	<tr><td><code>^</code></td><td><code>Core:pow</code></td><td>Exponentiation</td></tr>
-	<tr><td><code>+ (unary)</code></td><td>None</td><td>Positive</td></tr>
-	<tr><td><code>- (unary)</code></td><td>None</td><td>Negative</td></tr>
-	<tr><td><code>! (unary)</code></td><td>None</td><td>Negation</td></tr>
-	<tr><td><code>*</code></td><td><code>Core:mul</code></td><td>Multiplication</td></tr>
-	<tr><td><code>/</code></td><td><code>Core:div</code></td><td>Division</td></tr>
-	<tr><td><code>%</code></td><td><code>Core:mod</code></td><td>Modulus</td></tr>
-	<tr><td><code>+</code></td><td><code>Core:add</code></td><td>Addition</td></tr>
-	<tr><td><code>-</code></td><td><code>Core:sub</code></td><td>Subtraction</td></tr>
-	<tr><td><code>></code></td><td><code>Core:gt</code></td><td>Greater than</td></tr>
-	<tr><td><code>>=</code></td><td><code>Core:gteq</code></td><td>Greater than or equal to</td></tr>
-	<tr><td><code><</code></td><td><code>Core:lt</code></td><td>Less than</td></tr>
-	<tr><td><code><=</code></td><td><code>Core:lteq</code></td><td>Less than or equal to</td></tr>
-	<tr><td><code>==</code></td><td><code>Core:eq</code></td><td>Equal to</td></tr>
-	<tr><td><code>!=</code></td><td><code>Core:neq</code></td><td>Not equal to</td></tr>
-	<tr><td><code>&&</code></td><td><code>Core:and</code></td><td>And</td></tr>
-	<tr><td><code>||</code></td><td><code>Core:or</code></td><td>Or</td></tr>
+	<tbody>
+		<tr><th>Operator</th><th>Corresponding Function</th><th>Meaning</th></tr>
+		<tr><td><code>^</code></td><td><code>Core:pow</code></td><td>Exponentiation</td></tr>
+		<tr><td><code>+ (unary)</code></td><td>None</td><td>Positive</td></tr>
+		<tr><td><code>- (unary)</code></td><td>None</td><td>Negative</td></tr>
+		<tr><td><code>! (unary)</code></td><td>None</td><td>Negation</td></tr>
+		<tr><td><code>*</code></td><td><code>Core:mul</code></td><td>Multiplication</td></tr>
+		<tr><td><code>/</code></td><td><code>Core:div</code></td><td>Division</td></tr>
+		<tr><td><code>%</code></td><td><code>Core:mod</code></td><td>Modulus</td></tr>
+		<tr><td><code>+</code></td><td><code>Core:add</code></td><td>Addition</td></tr>
+		<tr><td><code>-</code></td><td><code>Core:sub</code></td><td>Subtraction</td></tr>
+		<tr><td><code>></code></td><td><code>Core:gt</code></td><td>Greater than</td></tr>
+		<tr><td><code>>=</code></td><td><code>Core:gteq</code></td><td>Greater than or equal to</td></tr>
+		<tr><td><code><</code></td><td><code>Core:lt</code></td><td>Less than</td></tr>
+		<tr><td><code><=</code></td><td><code>Core:lteq</code></td><td>Less than or equal to</td></tr>
+		<tr><td><code>==</code></td><td><code>Core:eq</code></td><td>Equal to</td></tr>
+		<tr><td><code>!=</code></td><td><code>Core:neq</code></td><td>Not equal to</td></tr>
+		<tr><td><code>&&</code></td><td><code>Core:and</code></td><td>And</td></tr>
+		<tr><td><code>||</code></td><td><code>Core:or</code></td><td>Or</td></tr>
+	</tbody>
 </table>
 
 ### if

@@ -324,24 +324,26 @@ Ai:kun() // kawaii
 ### 演算子一覧
 上から順に優先度が高くなっています。（一部優先度が同じものもあります）  
 <table>
-	<tr><th>演算子</th><th>対応する関数</th><th>意味</th></tr>
-	<tr><td><code>^</code></td><td><code>Core:pow</code></td><td>冪算</td></tr>
-	<tr><td><code>+（単項）</code></td><td>なし</td><td>正数</td></tr>
-	<tr><td><code>-（単項）</code></td><td>なし</td><td>負数</td></tr>
-	<tr><td><code>!（単項）</code></td><td>なし</td><td>否定</td></tr>
-	<tr><td><code>*</code></td><td><code>Core:mul</code></td><td>乗算</td></tr>
-	<tr><td><code>/</code></td><td><code>Core:div</code></td><td>除算</td></tr>
-	<tr><td><code>%</code></td><td><code>Core:mod</code></td><td>剰余</td></tr>
-	<tr><td><code>+</code></td><td><code>Core:add</code></td><td>加算</td></tr>
-	<tr><td><code>-</code></td><td><code>Core:sub</code></td><td>減算</td></tr>
-	<tr><td><code>></code></td><td><code>Core:gt</code></td><td>大きい</td></tr>
-	<tr><td><code>>=</code></td><td><code>Core:gteq</code></td><td>以上</td></tr>
-	<tr><td><code><</code></td><td><code>Core:lt</code></td><td>小さい</td></tr>
-	<tr><td><code><=</code></td><td><code>Core:lteq</code></td><td>以下</td></tr>
-	<tr><td><code>==</code></td><td><code>Core:eq</code></td><td>等しい</td></tr>
-	<tr><td><code>!=</code></td><td><code>Core:neq</code></td><td>等しくない</td></tr>
-	<tr><td><code>&&</code></td><td><code>Core:and</code></td><td>かつ</td></tr>
-	<tr><td><code>||</code></td><td><code>Core:or</code></td><td>または</td></tr>
+	<tbody>
+		<tr><th>演算子</th><th>対応する関数</th><th>意味</th></tr>
+		<tr><td><code>^</code></td><td><code>Core:pow</code></td><td>冪算</td></tr>
+		<tr><td><code>+（単項）</code></td><td>なし</td><td>正数</td></tr>
+		<tr><td><code>-（単項）</code></td><td>なし</td><td>負数</td></tr>
+		<tr><td><code>!（単項）</code></td><td>なし</td><td>否定</td></tr>
+		<tr><td><code>*</code></td><td><code>Core:mul</code></td><td>乗算</td></tr>
+		<tr><td><code>/</code></td><td><code>Core:div</code></td><td>除算</td></tr>
+		<tr><td><code>%</code></td><td><code>Core:mod</code></td><td>剰余</td></tr>
+		<tr><td><code>+</code></td><td><code>Core:add</code></td><td>加算</td></tr>
+		<tr><td><code>-</code></td><td><code>Core:sub</code></td><td>減算</td></tr>
+		<tr><td><code>></code></td><td><code>Core:gt</code></td><td>大きい</td></tr>
+		<tr><td><code>>=</code></td><td><code>Core:gteq</code></td><td>以上</td></tr>
+		<tr><td><code><</code></td><td><code>Core:lt</code></td><td>小さい</td></tr>
+		<tr><td><code><=</code></td><td><code>Core:lteq</code></td><td>以下</td></tr>
+		<tr><td><code>==</code></td><td><code>Core:eq</code></td><td>等しい</td></tr>
+		<tr><td><code>!=</code></td><td><code>Core:neq</code></td><td>等しくない</td></tr>
+		<tr><td><code>&&</code></td><td><code>Core:and</code></td><td>かつ</td></tr>
+		<tr><td><code>||</code></td><td><code>Core:or</code></td><td>または</td></tr>
+	</tbody>
 </table>
 
 ### if
