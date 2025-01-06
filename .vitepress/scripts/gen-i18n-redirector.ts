@@ -1,6 +1,12 @@
+// @ts-expect-error Node
 import fs from 'fs';
 import { mainLocale, baseUrl } from '../config';
 import type { SiteConfig } from 'vitepress';
+
+type RouteMeta = {
+    title: string;
+    description?: string;
+};
 
 async function createFile(path: string, content: string) {
     const dir = path.replace(/\/[^/]+$/, '');
@@ -11,25 +17,43 @@ async function createFile(path: string, content: string) {
     });
 }
 
-export async function genI18nRedirector(siteConfig: SiteConfig) {
-    const routes = siteConfig.pages
-        .filter((page) => page.startsWith(`${mainLocale}/`))
-        .map((page) => page.replace(new RegExp(`^${mainLocale}\/`), '').replace(/\.md$/, '.html'));
+export function createGenI18nRedirector() {
+    const routeMeta = new Map<string, RouteMeta>();
 
-    const promises = routes.map((route) => {
-        const localeNames = Object.keys(siteConfig.site.locales);
-        const routeForRender = route.replace(/index\.html$/, '');
-        const linkAlternate = localeNames.map((name) => `<link rel="alternate" hreflang="${siteConfig.site.locales[name].lang || name}" href="${baseUrl}/${name}/${routeForRender}">`).join('\n    ');
-        const fallbackLinks = localeNames.map((name) => `<a href="${baseUrl}/${name}/${routeForRender}">${siteConfig.site.locales[name].label}</a>`).join(', ');
-        const content = `<!DOCTYPE html>
-<html lang="${siteConfig.site.locales[mainLocale].lang || 'ja-JP'}">
+    function registerRouteMeta(route: string, meta: RouteMeta) {
+        routeMeta.set(route, meta);
+    }
+    
+    async function genI18nRedirector(siteConfig: SiteConfig) {
+        const genStartedAt = performance.now();
+
+        const routes = siteConfig.pages
+            .filter((page) => page.startsWith(`${mainLocale}/`));
+    
+        const promises = routes.map(async (route) => {
+            const routePath = route.replace(new RegExp(`^${mainLocale}\/`), '');
+            const routePathForWrite = routePath.replace(/\.md$/, '.html');
+            const routePathForRender = routePath.replace(/index\.(md|html)$/, '').replace(/\.md$/, siteConfig.cleanUrls ? '' : '.html');
+
+            let title = 'Redirecting...';
+            let description: string | null = null;
+            if (routeMeta.has(`${mainLocale}/${routePathForRender}`)) {
+                title = routeMeta.get(`${mainLocale}/${routePathForRender}`)?.title ?? title;
+                description = routeMeta.get(`${mainLocale}/${routePathForRender}`)?.description ?? null;
+            }
+    
+            const localeNames = Object.keys(siteConfig.site.locales);
+            const linkAlternate = localeNames.map((name) => `<link rel="alternate" hreflang="${siteConfig.site.locales[name].lang || name}" href="${baseUrl}/${name}/${routePathForRender}">`).join('\n    ');
+            const fallbackLinks = localeNames.map((name) => `<a href="${baseUrl}/${name}/${routePathForRender}">${siteConfig.site.locales[name].label}</a>`).join(', ');
+            const content = `<!DOCTYPE html>
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>${title}</title>${description ? `\n    <meta name="description" content="${description}">\n` : ''}
     ${linkAlternate}
-    <link rel="alternate" hreflang="x-default" href="${baseUrl}/${mainLocale}/${routeForRender}">
-    <link rel="canonical" href="${baseUrl}/${mainLocale}/${routeForRender}">
+    <link rel="alternate" hreflang="x-default" href="${baseUrl}/${mainLocale}/${routePathForRender}">
+    <link rel="canonical" href="${baseUrl}/${mainLocale}/${routePathForRender}">
     <script type="text/javascript">const s = ${JSON.stringify(localeNames)}; const d = localStorage.getItem('ais:locale'); if (d) { location.replace('/' + d + location.pathname + location.search + location.hash); } else if (s.includes(navigator.language.split("-")[0])) { location.replace('/' + navigator.language.split("-")[0] + location.pathname + location.search + location.hash); } else { location.replace('/ja' + location.pathname + location.search + location.hash); }</script>
 </head>
 <body>
@@ -37,10 +61,17 @@ export async function genI18nRedirector(siteConfig: SiteConfig) {
 </body>
 </html>
 `;
-        return createFile(`${siteConfig.outDir}/${route}`, content);
-    });
+            await createFile(`${siteConfig.outDir}/${routePathForWrite}`, content);
+        });
+    
+        await Promise.allSettled(promises);
+    
+        const genFinishedAt = performance.now();
+        console.log(`I18n redirector generated in ${Math.round((genFinishedAt - genStartedAt) / 10) / 100}s`);
+    }
 
-    await Promise.allSettled(promises);
-
-    console.log('I18n redirector generated');
+    return {
+        registerRouteMeta,
+        genI18nRedirector,
+    };
 }
