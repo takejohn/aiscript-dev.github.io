@@ -2,8 +2,14 @@
     <div :class="$style.playgroundRoot">
         <div :class="$style.playgroundHeader">
             <div :class="$style.playgroundHeaderInner">
-                <div>Playground <small>(v{{ AISCRIPT_VERSION }})</small></div>
-                <div :class="$style.playgroundOptions"></div>
+                <div>Playground <small>(v{{ runner?.version ?? "???" }})</small></div>
+                <div :class="$style.playgroundOptions">
+                    <select :class="$style.playgroundSelect" v-model="version">
+                        <option v-for="version in versionModules.keys()" :value="version">
+                            {{ version === latestVersion ? `${version} (latest)` : version }}
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
         <div :class="[$style.playgroundPaneRoot, $style.playgroundEditorPane]">
@@ -83,7 +89,6 @@
 </template>
 
 <script setup lang="ts">
-import { AISCRIPT_VERSION, Parser, Interpreter, utils, errors, type Ast } from '@syuilo/aiscript';
 import { inBrowser } from 'vitepress';
 import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
@@ -91,6 +96,8 @@ import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 import lzString from 'lz-string';
 import { useThrottle } from '../scripts/throttle';
+import type { Runner } from '../scripts/runner';
+import { latestVersion, versionModules } from '../scripts/versions';
 
 // lz-stringがCommonJSモジュールだったみたいなので
 const { compressToEncodedURIComponent, decompressFromEncodedURIComponent } = lzString;
@@ -166,8 +173,10 @@ function replaceWithFizzbuzz() {
 //#endregion
 
 //#region Runner
-let parser: Parser | null = null;
-let interpreter: Interpreter | null = null;
+let RunnerConstructor: new (...args: ConstructorParameters<typeof Runner>) => Runner;
+const runner = ref<Runner>();
+
+const version = ref(latestVersion);
 
 const isRunning = ref(false);
 
@@ -179,7 +188,7 @@ const logEl = useTemplateRef('logEl');
 
 const isSyntaxError = ref(false);
 
-const ast = ref<Ast.Node[] | null>(null);
+const ast = ref<unknown>(null);
 const astHtml = ref('');
 
 const metadata = ref<unknown>(null);
@@ -188,16 +197,16 @@ const metadataHtml = ref('');
 function parse() {
     isSyntaxError.value = false;
 
-    if (parser != null) {
+    if (runner.value == null) {
+        ast.value = null;
+    } else {
         try {
-            const _ast = parser.parse(code.value);
+            const [ast_, metadata_] = runner.value.parse(code.value);
             logs.value = [];
-            ast.value = _ast;
-
-            const meta = Interpreter.collectMetadata(_ast);
-            metadata.value = meta?.get(null) ?? null;
+            ast.value = ast_;
+            metadata.value = metadata_?.get(null) ?? null;
         } catch (err) {
-            if (err instanceof errors.AiScriptError) {
+            if (runner.value.isAiScriptError(err)) {
                 logs.value = [{
                     text: `[SyntaxError] ${err.name}: ${err.message}`,
                     type: 'error',
@@ -207,30 +216,15 @@ function parse() {
             ast.value = null;
             metadata.value = null;
         }
-    } else {
-        ast.value = null;
     }
 }
 
 function initAiScriptEnv() {
-    if (parser == null) {
-        parser = new Parser();
-    }
-    if (interpreter != null) {
-        interpreter.abort();
-    }
-    interpreter = new Interpreter({}, {
-        out: (value) => {
-            logs.value.push({
-                text: value.type === 'num' ? value.value.toString() : value.type === 'str' ? `"${value.value}"` : JSON.stringify(utils.valToJs(value), null, 2) ?? '',
-            });
-        },
-        log: (type, params) => {
-            if (type === 'end' && params.val != null && 'type' in params.val) {
-                logs.value.push({
-                    text: utils.valToString(params.val, true),
-                });
-            }
+    runner.value?.dispose();
+
+    runner.value = new RunnerConstructor({
+        print(text) {
+            logs.value.push({ text });
         },
     });
 }
@@ -244,10 +238,10 @@ async function run() {
     isRunning.value = true;
 
     parse();
-    if (ast.value != null && interpreter !== null) {
+    if (ast.value != null && runner.value != null) {
         try {
             const execStartTime = performance.now();
-            await interpreter.exec(ast.value);
+            await runner.value.exec(ast.value);
             const execEndTime = performance.now();
             logs.value.push({
                 text: `[Playground] Execution Completed in ${Math.round(execEndTime - execStartTime)}ms`,
@@ -259,21 +253,8 @@ async function run() {
                 });
             }
         } catch (err) {
-            if (err instanceof errors.AiScriptError) {
-                let errorName = 'AiScriptError';
-
-                if (err instanceof errors.AiScriptSyntaxError) {
-                    errorName = 'SyntaxError';
-                } else if (err instanceof errors.AiScriptTypeError) {
-                    errorName = 'TypeError';
-                } else if (err instanceof errors.AiScriptRuntimeError) {
-                    errorName = 'RuntimeError';
-                } else if (err instanceof errors.AiScriptIndexOutOfRangeError) {
-                    errorName = 'IndexOutOfRangeError';
-                } else if (err instanceof errors.AiScriptUserError) {
-                    errorName = 'UserError';
-                }
-
+            if (runner.value.isAiScriptError(err)) {
+                const errorName = runner.value.getErrorName(err);
                 logs.value.push({
                     text: `[${errorName}] ${err.name}: ${err.message}`,
                     type: 'error',
@@ -291,8 +272,8 @@ async function run() {
 }
 
 function abort() {
-    if (interpreter != null) {
-        interpreter.abort();
+    if (runner.value != null) {
+        runner.value.dispose();
         logs.value.push({
             text: '[Playground] Execution Aborted',
             type: 'info',
@@ -309,7 +290,7 @@ function clearLog() {
 //#region Permalink with hash
 type HashData = {
     code: string;
-    // TODO: バージョン情報（マルチバージョン対応の際に必要。なければ最新にフォールバック）
+    version?: string;
 };
 const hash = ref<string | null>(inBrowser ? window.location.hash.slice(1) || localStorage.getItem('ais:playground') : null);
 const hashData = computed<HashData | null>(() => {
@@ -332,16 +313,38 @@ onMounted(async () => {
     const loadStartedAt = Date.now();
 
     await init();
-    initAiScriptEnv();
 
-    if (hashData.value != null && hashData.value.code != null) {
-        code.value = hashData.value.code;
+    if (hashData.value != null) {
+        if (hashData.value.code != null) {
+            code.value = hashData.value.code;
+        }
+        if (hashData.value.version != null) {
+            version.value = hashData.value.version;
+        }
     }
-    watch([code], () => {
-        updateHash({ code: code.value });
+
+    watch(version, async () => {
+        editorLoading.value = true;
+
+        const import_ = versionModules.get(version.value);
+        if (import_ == null) return;
+
+        const module = await import_();
+        RunnerConstructor = module.default;
+
+        initAiScriptEnv();
+
+        editorLoading.value = false;
     }, { immediate: true });
 
-    watch(code, async (newCode) => {
+    watch([code, version], () => {
+        updateHash({
+            code: code.value,
+            version: version.value,
+        });
+    }, { immediate: true });
+
+    watch([code, runner], ([newCode]) => {
         parse();
         if (highlighter) {
             editorHtml.value = highlighter.codeToHtml(newCode, {
@@ -399,9 +402,7 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-    if (interpreter != null) {
-        interpreter.abort();
-    }
+    runner.value?.dispose();
 });
 </script>
 
@@ -420,8 +421,10 @@ onUnmounted(() => {
 
 .playgroundHeaderInner {
     margin: 0 auto;
-    padding: 0.5em 36px;
+    padding: 0 36px;
+    min-height: 40px;
     display: flex;
+    align-items: center;
 }
 
 .playgroundOptions {
@@ -629,6 +632,28 @@ onUnmounted(() => {
     background-color: var(--vp-button-brand-hover-bg);
 }
 
+.playgroundSelect {
+    background-color: var(--vp-button-alt-bg);
+    transition: background-color 0.25s;
+    padding: 3px 36px 3px 16px;
+    border-radius: 8px;
+    font-family: var(--vp-font-family-base);
+    font-size: 80%;
+
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right .75em center;
+    background-size: 16px 12px;
+}
+
+:global(html.dark) .playgroundSelect {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23fffff5db' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.playgroundSelect:hover {
+    background-color: var(--vp-button-alt-hover-bg);
+}
+
 @media (max-width: 768px) {
     .playgroundEditorScroller,
     .playgroundEditorTextarea {
@@ -636,7 +661,7 @@ onUnmounted(() => {
     }
 
     .playgroundHeaderInner {
-        padding: 0.5em 24px;
+        padding: 0 24px;
     }
 
     .playgroundResultActionsLeft {
