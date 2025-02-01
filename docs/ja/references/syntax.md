@@ -419,3 +419,39 @@ var foo = exists bar
 // 変数fooが存在するためtrue
 var bar = exists foo
 ```
+
+## ラベル構文
+以下の文や式にラベルを付与することができます。
+- [`for`](#for)
+- [`each`](#each)
+- [`while`](#while)
+- [`do-while`](#do-while)
+- [`loop`](#loop)
+- [`if`](#if)
+- [`eval`](#eval)
+- [`match`](#match)
+
+ネストしたブロック内でラベルを付与した`break`文や`continue`文を使用することで外側のブロックから脱出することができます。
+```aiscript playground
+#outer: for let x, 3 {
+	for let y, 2 {
+		if (x == 1 && y == 1) {
+			continue #outer
+		}
+		<: [x, y]
+	}
+}
+```
+
+`eval`または`if`, `match`に対応するbreak文には値を指定することができます。
+```aiscript playground
+<: #label1: eval {
+	break #label1
+	1
+} // => null
+
+<: #label2: eval {
+	break #label2 2
+	3
+} // => 2
+```

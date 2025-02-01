@@ -419,3 +419,39 @@ var foo = exists bar
 // Variable foo exists, so true
 var bar = exists foo
 ```
+
+## Labeled Statements and Expressions
+The following statements and expressions can be labeled.
+- [`for`](#for)
+- [`each`](#each)
+- [`while`](#while)
+- [`do-while`](#do-while)
+- [`loop`](#loop)
+- [`if`](#if)
+- [`eval`](#eval)
+- [`match`](#match)
+
+You can exit outer blocks using labeled `break` and `continue` statements in nested blocks.
+```aiscript playground
+#outer: for let x, 3 {
+	for let y, 2 {
+		if (x == 1 && y == 1) {
+			continue #outer
+		}
+		<: [x, y]
+	}
+}
+```
+
+A `break` statement associated with `eval`, `if`, or `match` can include a value.
+```aiscript playground
+<: #label1: eval {
+	break #label1
+	1
+} // => null
+
+<: #label2: eval {
+	break #label2 2
+	3
+} // => 2
+```
