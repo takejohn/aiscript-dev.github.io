@@ -3,7 +3,8 @@ export function useThrottle<F extends (...args: any) => void>(fn: F, delay: numb
     let isFirst = true;
     return function (...args: Parameters<F>) {
         if (timer) {
-            return;
+            clearTimeout(timer);
+            timer = null;
         }
         if (isFirst) {
             fn(...args);
