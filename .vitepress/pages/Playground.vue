@@ -93,7 +93,7 @@ import { inBrowser } from 'vitepress';
 import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
 import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
-import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
+import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import lzString from 'lz-string';
 import { useThrottle } from '../scripts/throttle';
 import type { Runner } from '../scripts/runner';
@@ -129,7 +129,9 @@ async function init() {
             import('shiki/themes/github-light.mjs'),
             import('shiki/themes/github-dark.mjs'),
         ],
-        engine: createOnigurumaEngine(import('shiki/onig.wasm?init')),
+        engine: createJavaScriptRegexEngine({
+            forgiving: true,
+        }),
     });
 }
 
