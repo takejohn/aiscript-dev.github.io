@@ -12,7 +12,7 @@ importers:
   .:
     devDependencies:
       '@syuilo/aiscript':
-        specifier: 1.0.0-dev.20250222
+        specifier: dev
         version: 1.0.0-dev.20250222
       aiscript-vscode:
         specifier: github:aiscript-dev/aiscript-vscode#v0.1.16

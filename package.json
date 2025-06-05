@@ -8,7 +8,7 @@
   },
   "packageManager": "pnpm@9.14.3",
   "devDependencies": {
-    "@syuilo/aiscript": "1.0.0-dev.20250222",
+    "@syuilo/aiscript": "dev",
     "aiscript-vscode": "github:aiscript-dev/aiscript-vscode#v0.1.16",
     "aiscript0_14": "npm:@syuilo/aiscript@0.14.1",
     "aiscript0_15": "npm:@syuilo/aiscript@0.15.0",
