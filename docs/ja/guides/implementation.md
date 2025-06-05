@@ -206,6 +206,6 @@ run();
 
 既存の関数群との衝突を避けるためにも、名前空間を意識して関数名を指定することをお勧めします。
 
-独自関数を多数実装している[Misskeyの独自関数のリファレンス](https://misskey-hub.net/docs/for-developers/plugin/plugin-api-reference/)や、[実際に独自関数を実装している部分のコード](https://github.com/misskey-dev/misskey/blob/develop/packages/frontend/src/scripts/aiscript/api.ts)が参考になるでしょう。
+独自関数を多数実装している[Misskeyの独自関数のリファレンス](https://misskey-hub.net/docs/for-developers/plugin/plugin-api-reference/)や、[実際に独自関数を実装している部分のコード](https://github.com/misskey-dev/misskey/blob/develop/packages/frontend/src/aiscript/api.ts)が参考になるでしょう。
 
 :::

@@ -122,7 +122,7 @@ run();
 Congratulations! The message `Hello, World!` should appear in the console.
 
 :::warning Note
-In a production environment, ensure to add error handling for both `parser.parse` and `interpreter.exec`, as well as for AiScript internal error (can be handled in handler of the `Interpreter`).
+When you are running AiScript runtime in production environment, ensure to add error handling for both `parser.parse` and `interpreter.exec`, as well as for AiScript internal error (can be handled in handler of the `Interpreter`).
 :::
 
 ## 3. Injecting Custom Values
@@ -206,6 +206,6 @@ Function arguments are also passed as AiScript values. Use `assert*` functions i
 
 To avoid conflicts with existing functions, it is recommended to use namespaces when naming your functions.
 
-For reference, check out the [Misskey-enhanced function reference](https://misskey-hub.net/docs/for-developers/plugin/plugin-api-reference/) and the [implementation of custom functions in code](https://github.com/misskey-dev/misskey/blob/develop/packages/frontend/src/scripts/aiscript/api.ts), which include a bunch of custom functions.
+For reference, check out the [Misskey-enhanced function reference](https://misskey-hub.net/docs/for-developers/plugin/plugin-api-reference/) and the [implementation of custom functions in code](https://github.com/misskey-dev/misskey/blob/develop/packages/frontend/src/aiscript/api.ts), which include a bunch of custom functions.
 
 :::
