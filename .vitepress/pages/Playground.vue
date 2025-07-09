@@ -24,18 +24,24 @@
             </div>
 
             <div :class="$style.playgroundEditorRoot">
-                <div :class="$style.playgroundEditorScroller" :inert="editorLoading">
-                    <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
-                    <textarea
-                        ref="inputEl"
-                        v-model="code"
-                        @input="onInput"
-                        @keydown="onKeydown"
-                        autocomplete="off"
-                        wrap="off"
-                        spellcheck="false"
-                        :class="$style.playgroundEditorTextarea"
-                    ></textarea>
+                <div :class="$style.playgroundEditorScRoot">
+                    <div :class="$style.playgroundEditorScroller" :inert="editorLoading">
+                        <div :class="[$style.highlight, $style.playgroundEditorHighlight]" v-html="editorHtml"></div>
+                        <textarea
+                            ref="inputEl"
+                            v-model="code"
+                            @input="onInput"
+                            @keydown="onKeydown"
+                            @selectionchange.passive="setEditorCursorPosition"
+                            autocomplete="off"
+                            wrap="off"
+                            spellcheck="false"
+                            :class="$style.playgroundEditorTextarea"
+                        ></textarea>
+                    </div>
+                </div>
+                <div :class="$style.playgroundInfoFooter">
+                    <div>Row: {{ currentCursor.row + 1 }}, Column: {{ currentCursor.column + 1 }}</div>
                 </div>
                 <div v-if="editorLoading" :class="$style.playgroundEditorLoading">
                     <div>Loading...</div>
@@ -92,7 +98,7 @@
 import { inBrowser } from 'vitepress';
 import { ref, computed, useTemplateRef, nextTick, onMounted, watch, onUnmounted } from 'vue';
 import { createHighlighterCore } from 'shiki/core';
-import type { HighlighterCore, LanguageRegistration } from 'shiki/core';
+import type { HighlighterCore, LanguageRegistration, ShikiTransformerContext } from 'shiki/core';
 import { createJavaScriptRegexEngine } from 'shiki/engine/javascript';
 import lzString from 'lz-string';
 import { useThrottle } from '../scripts/throttle';
@@ -116,6 +122,13 @@ const editorLoading = ref(true);
 const inputEl = useTemplateRef('inputEl');
 const code = ref(fizzbuzz);
 const editorHtml = ref('');
+const currentCursor = ref<{
+    row: number;
+    column: number;
+}>({
+    row: 0,
+    column: 0,
+});
 
 let highlighter: HighlighterCore | null = null;
 
@@ -133,6 +146,20 @@ async function init() {
             forgiving: true,
         }),
     });
+}
+
+function setEditorCursorPosition() {
+    if (inputEl.value == null) return;
+
+    const pos = inputEl.value.selectionDirection === 'backward'
+        ? inputEl.value.selectionStart
+        : inputEl.value.selectionEnd;
+    const lines = code.value.slice(0, pos).split('\n');
+
+    currentCursor.value = {
+        row: lines.length - 1,
+        column: lines[lines.length - 1].length,
+    };
 }
 
 function onInput(ev: Event) {
@@ -189,6 +216,7 @@ const logs = ref<{
 const logEl = useTemplateRef('logEl');
 
 const isSyntaxError = ref(false);
+const errorLine = ref<number | null>(null);
 
 const ast = ref<unknown>(null);
 const astHtml = ref('');
@@ -198,6 +226,7 @@ const metadataHtml = ref('');
 
 function parse() {
     isSyntaxError.value = false;
+    errorLine.value = null;
 
     if (runner.value == null) {
         ast.value = null;
@@ -214,6 +243,13 @@ function parse() {
                     type: 'error',
                 }];
                 isSyntaxError.value = true;
+
+                const lineRes = /\(Line\s*(:\s*)?(\d+)/.exec(err.message);
+                if (lineRes != null) {
+                    errorLine.value = parseInt(lineRes[2], 10); // Convert to zero-based index
+                } else {
+                    errorLine.value = null;
+                }
             }
             ast.value = null;
             metadata.value = null;
@@ -356,6 +392,13 @@ onMounted(async () => {
                     dark: 'github-dark',
                 },
                 defaultColor: false,
+                transformers: [{
+                    line(node, lineIndex) {
+                        if (isSyntaxError.value && errorLine.value === lineIndex) {
+                            this.addClassToHast(node, 'error');
+                        }
+                    },
+                }],
             });
         }
     }, { immediate: true });
@@ -451,7 +494,24 @@ onUnmounted(() => {
 
 .playgroundEditorRoot {
     position: relative;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.playgroundEditorScRoot {
     overflow: scroll;
+    flex-grow: 1;
+}
+
+.playgroundInfoFooter {
+    border-top: 1px solid var(--vp-c-divider);
+    flex-shrink: 0;
+    padding: 0 24px;
+    font-size: 12px;
+    line-height: 24px;
+    color: var(--vp-c-text-2);
 }
 
 .playgroundEditorLoading {
@@ -518,6 +578,11 @@ onUnmounted(() => {
 .highlight span:global(.line) {
     display: inline-block;
     min-height: 1em;
+    min-width: 100%;
+}
+
+.highlight span:global(.line.error) {
+    background-color: var(--vp-c-danger-soft);
 }
 
 :global(html.dark) .highlight span {
