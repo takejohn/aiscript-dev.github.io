@@ -577,7 +577,7 @@ onUnmounted(() => {
 
 .highlight span:global(.line) {
     display: inline-block;
-    min-height: 20px;
+    min-height: 1em;
     min-width: 100%;
 }
 
