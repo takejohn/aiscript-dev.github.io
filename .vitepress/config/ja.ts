@@ -19,12 +19,24 @@ const guideNav: DefaultTheme.SidebarItem[] = [
 ];
 
 const referenceNav: DefaultTheme.SidebarItem[] = [
-    { text: '構文', link: 'syntax' },
-    { text: '組み込みプロパティ', link: 'builtin-props' },
-    { text: '予約語', link: 'keywords' },
-    { text: 'リテラル式', link: 'literals' },
-    { text: '組み込み関数', link: 'std' },
-    { text: '組み込み関数（Math）', link: 'std-math' },
+    {
+        text: '言語仕様',
+        items: [
+            { text: '構文', link: 'syntax' },
+            { text: '組み込みプロパティ', link: 'builtin-props' },
+            { text: '予約語', link: 'keywords' },
+            { text: 'リテラル式', link: 'literals' },
+            { text: '組み込み関数', link: 'std' },
+            { text: '組み込み関数（Math）', link: 'std-math' },
+        ],
+    },
+    {
+        text: 'JavaScript Interface',
+        items: [
+            { text: '基本の処理系', link: 'interface/basic' },
+            { text: 'AiSON', link: 'interface/aison' },
+        ],
+    },
 ];
 
 export const jaSearchLocale: NonNullable<DefaultTheme.LocalSearchOptions['translations']> = {

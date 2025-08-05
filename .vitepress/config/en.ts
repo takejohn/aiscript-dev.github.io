@@ -19,12 +19,24 @@ const guideNav: DefaultTheme.SidebarItem[] = [
 ];
 
 const referenceNav: DefaultTheme.SidebarItem[] = [
-    { text: 'Syntax', link: 'syntax' },
-    { text: 'Built-in Properties', link: 'builtin-props' },
-    { text: 'Keywords', link: 'keywords' },
-    { text: 'Literal Expressions', link: 'literals' },
-    { text: 'Built-in Functions', link: 'std' },
-    { text: 'Built-in Functions (Math)', link: 'std-math' },
+    {
+        text: 'Language Specification',
+        items: [
+            { text: 'Syntax', link: 'syntax' },
+            { text: 'Built-in Properties', link: 'builtin-props' },
+            { text: 'Keywords', link: 'keywords' },
+            { text: 'Literal Expressions', link: 'literals' },
+            { text: 'Built-in Functions', link: 'std' },
+            { text: 'Math Functions', link: 'std-math' },
+        ],
+    },
+    {
+        text: 'JavaScript Interface Specification',
+        items: [
+            { text: 'Basic Runtime', link: 'interface/basic' },
+            { text: 'AiSON', link: 'interface/aison' },
+        ],
+    },
 ];
 
 export const en = defineConfig({
