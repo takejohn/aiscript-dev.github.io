@@ -6,6 +6,7 @@ interface VersionModule {
 
 export const versionModules = new Map<string, () => Promise<VersionModule>>([
   ['dev', () => import('./dev')],
+  ['1.0.0', () => import('./1.0.0')],
   ['0.19.0', () => import('./0.19.0')],
   ['0.18.0', () => import('./0.18.0')],
   ['0.17.0', () => import('./0.17.0')],

@@ -12,8 +12,8 @@ importers:
   .:
     devDependencies:
       '@syuilo/aiscript':
-        specifier: 1.0.0-dev.20250804
-        version: 1.0.0-dev.20250804
+        specifier: dev
+        version: 1.0.0-dev.20250805
       aiscript-vscode:
         specifier: github:aiscript-dev/aiscript-vscode#v0.1.16
         version: https://codeload.github.com/aiscript-dev/aiscript-vscode/tar.gz/1dc7f60cda78d030dadfc518a33c472202b2ef67
@@ -35,6 +35,9 @@ importers:
       aiscript0_19:
         specifier: npm:@syuilo/aiscript@0.19.0
         version: '@syuilo/aiscript@0.19.0'
+      aiscript1_0:
+        specifier: npm:@syuilo/aiscript@1.0.0
+        version: '@syuilo/aiscript@1.0.0'
       lz-string:
         specifier: ^1.5.0
         version: 1.5.0
@@ -631,8 +634,11 @@ packages:
   '@syuilo/aiscript@0.19.0':
     resolution: {integrity: sha512-ZWG4s1m6RrFjE7NeIMaxFz769YO1jW5ReTrOROrEO4IHheOrjxxJ/Ffe2TUNqX9/XxDloMwfWplKhfSzx8LGMA==}
 
-  '@syuilo/aiscript@1.0.0-dev.20250804':
-    resolution: {integrity: sha512-RwLnQUCk7S28NfdOSKOTeXj63kOuhtgTHiAQtRUc4p5mP8HrugKkS3ZZZGkUo3BULyCPJfkDmR8HyrguX/nQ5Q==}
+  '@syuilo/aiscript@1.0.0':
+    resolution: {integrity: sha512-m+Dxx0g2pDI198OCj/OJgiJnE4ajlbOFAMyh84FmbY1S8ss/MHytxY82dCnMZj5WVt7VE7a1rtW7biuRRfuyaA==}
+
+  '@syuilo/aiscript@1.0.0-dev.20250805':
+    resolution: {integrity: sha512-xJ8UFQRnqwEY/WL3htLlur4z9GYIGorApxm6Yi0WvjNYmcs5tymf8w28/sfE8kkgERNc3J3XGv46xNSyDbIZZw==}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -1137,6 +1143,10 @@ packages:
 
   uuid@11.0.3:
     resolution: {integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==}
+    hasBin: true
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
   uuid@9.0.0:
@@ -1746,7 +1756,13 @@ snapshots:
       stringz: 2.1.0
       uuid: 9.0.1
 
-  '@syuilo/aiscript@1.0.0-dev.20250804':
+  '@syuilo/aiscript@1.0.0':
+    dependencies:
+      seedrandom: 3.0.5
+      stringz: 2.1.0
+      uuid: 11.1.0
+
+  '@syuilo/aiscript@1.0.0-dev.20250805':
     dependencies:
       seedrandom: 3.0.5
       stringz: 2.1.0
@@ -2362,6 +2378,8 @@ snapshots:
       unist-util-visit-parents: 6.0.1
 
   uuid@11.0.3: {}
+
+  uuid@11.1.0: {}
 
   uuid@9.0.0: {}
 
