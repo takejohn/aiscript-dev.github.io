@@ -10,18 +10,19 @@
   "devDependencies": {
     "@syuilo/aiscript": "dev",
     "aiscript-vscode": "github:aiscript-dev/aiscript-vscode#v0.1.16",
-    "aiscript1_0": "npm:@syuilo/aiscript@1.0.0",
     "aiscript0_14": "npm:@syuilo/aiscript@0.14.1",
     "aiscript0_15": "npm:@syuilo/aiscript@0.15.0",
     "aiscript0_16": "npm:@syuilo/aiscript@0.16.0",
     "aiscript0_17": "npm:@syuilo/aiscript@0.17.0",
     "aiscript0_18": "npm:@syuilo/aiscript@0.18.0",
     "aiscript0_19": "npm:@syuilo/aiscript@0.19.0",
+    "aiscript1_0": "npm:@syuilo/aiscript@1.0.0",
+    "aiscript1_1": "npm:@syuilo/aiscript@1.1.0",
     "lz-string": "^1.5.0",
     "markdown-it-mathjax3": "^4.3.2",
     "shiki": "^3.9.2",
     "vite": "^7.0.6",
-    "vitepress": "^1.6.3",
+    "vitepress": "^1.6.4",
     "vue": "^3.5.18"
   },
   "pnpm": {
