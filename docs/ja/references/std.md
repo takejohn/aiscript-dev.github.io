@@ -176,6 +176,9 @@ encoded_text をエンコードされたURI構成要素としてデコードし�
 #### @Obj:kvs(_v_: obj): arr
 オブジェクトのキー、値、キーと値の組を配列にして返します。
 
+#### @Obj:from_kvs(_kvs_: arr): obj;
+キーと値の組の配列からオブジェクトを作成して返します。（v1.1.2以降で使用可能）
+
 #### @Obj:get&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str): T
 
 #### @Obj:set&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str, _val_: T): null

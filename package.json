@@ -17,13 +17,13 @@
     "aiscript0_18": "npm:@syuilo/aiscript@0.18.0",
     "aiscript0_19": "npm:@syuilo/aiscript@0.19.0",
     "aiscript1_0": "npm:@syuilo/aiscript@1.0.0",
-    "aiscript1_1": "npm:@syuilo/aiscript@1.1.0",
+    "aiscript1_1": "npm:@syuilo/aiscript@1.1.2",
     "lz-string": "^1.5.0",
-    "markdown-it-mathjax3": "^4.3.2",
-    "shiki": "^3.9.2",
-    "vite": "^7.0.6",
+    "markdown-it-mathjax3": "^5.1.0",
+    "shiki": "^3.13.0",
+    "vite": "^7.1.7",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.18"
+    "vue": "^3.5.22"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

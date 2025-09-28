@@ -174,6 +174,9 @@ The array will be filled with _initial_ if given, otherwise with `null`.
 #### @Obj:kvs(_v_: obj): arr
 Returns an array of object keys, values, and key/value pairs.
 
+#### @Obj:from_kvs(_kvs_: arr): obj;
+Creates an object from key/value pairs. (Available from v1.1.2 or later)
+
 #### @Obj:get&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str): T
 
 #### @Obj:set&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str, _val_: T): null
