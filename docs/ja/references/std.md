@@ -172,7 +172,11 @@ encoded_text をエンコードされたURI構成要素としてデコードし�
 
 ### :: Obj
 #### @Obj:keys(_v_: obj): arr
+オブジェクトのキーを配列にして返します。
+
 #### @Obj:vals&lt;T&gt;(_v_: obj&lt;T&gt;): arr&lt;T&gt;
+オブジェクトの値を配列にして返します。
+
 #### @Obj:kvs(_v_: obj): arr
 オブジェクトのキー、値、キーと値の組を配列にして返します。
 
@@ -180,10 +184,13 @@ encoded_text をエンコードされたURI構成要素としてデコードし�
 キーと値の組の配列からオブジェクトを作成して返します。（v1.2.0以降で使用可能）
 
 #### @Obj:get&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str): T
+オブジェクトの _key_ に対応する値を返します。
 
 #### @Obj:set&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str, _val_: T): null
+オブジェクトの _key_ に値 _val_ を設定します。
 
 #### @Obj:has(_v_: obj, _key_: str): bool
+オブジェクトが _key_ を持っているかを返します。
 
 #### @Obj:copy&lt;T&gt;(_v_: obj&lt;T&gt;): obj&lt;T&gt;
 オブジェクトのコピーを生成します。  

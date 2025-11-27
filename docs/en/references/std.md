@@ -170,7 +170,11 @@ The array will be filled with _initial_ if given, otherwise with `null`.
 
 ### :: Obj
 #### @Obj:keys(_v_: obj): arr
+Returns an array of object keys.
+
 #### @Obj:vals&lt;T&gt;(_v_: obj&lt;T&gt;): arr&lt;T&gt;
+Returns an array of object values.
+
 #### @Obj:kvs(_v_: obj): arr
 Returns an array of object keys, values, and key/value pairs.
 
@@ -178,10 +182,13 @@ Returns an array of object keys, values, and key/value pairs.
 Creates an object from key/value pairs. (Available from v1.2.0 or later)
 
 #### @Obj:get&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str): T
+Returns the value corresponding to _key_ of the object.
 
 #### @Obj:set&lt;T&gt;(_v_: obj&lt;T&gt;, _key_: str, _val_: T): null
+Sets the value _val_ to the object's _key_.
 
 #### @Obj:has(_v_: obj, _key_: str): bool
+Returns whether the object has _key_.
 
 #### @Obj:copy&lt;T&gt;(_v_: obj&lt;T&gt;): obj&lt;T&gt;
 Generates the copy of the object.
