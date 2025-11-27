@@ -22,14 +22,29 @@ JSONに比べ、オブジェクトのkeyに`"`（ダブルクォーテーショ�
 
 ## JavaScript API
 
-AiSONをパースするための関数は`@syuilo/aiscript`に内包されています。`AiSON.parse`でAiSONの文字列からJavaScript Valueへの変換が可能です。
+AiSONをパースするための関数は`@syuilo/aiscript`に内包されています。
 
-:::tip
-現時点ではパースのみ可能です。AiSONへ変換する（`AiSON.stringify`）は実装されていません。
-:::
+`AiSON.parse`でAiSONの文字列からJavaScript Valueへの変換が可能です。シンタックスエラー時は `errors.AiScriptSyntaxError` がスローされます。
 
 ```ts
 import { AiSON } from '@syuilo/aiscript';
 
 const data = AiSON.parse('{key: "value"}');
+```
+
+AiScript v1.2.0 以降では、`AiSON.stringify`でJavaScript ValueからAiSONの文字列への変換が可能です。第一引数に変換したい値を、**第三引数に**インデント幅を指定します。第二引数は`JSON.stringify`とインターフェイスの互換性を保つために未使用となっています（リプレイサー関数はサポートされていません）。
+
+```ts
+import { AiSON } from '@syuilo/aiscript';
+
+const data = { key: "value" };
+
+// インデントなしで整形されたAiSON文字列を生成
+const str1 = AiSON.stringify(data);
+
+// インデント幅2で整形されたAiSON文字列を生成
+const str2 = AiSON.stringify(data, null, 2);
+
+// タブでインデントされたAiSON文字列を生成
+const str3 = AiSON.stringify(data, null, '\t');
 ```

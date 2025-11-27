@@ -23,14 +23,29 @@ More strictly:
 
 ## JavaScript API
 
-The `@syuilo/aiscript` package includes a built-in function for parsing AiSON. You can use `AiSON.parse` to convert an AiSON string directly into a JavaScript value.
+The `@syuilo/aiscript` package includes a built-in function for parsing AiSON.
 
-:::tip
-Currently, only parsing from AiSON to JavaScript is supported. A function to serialize a JavaScript object into an AiSON string (`AiSON.stringify`) has not yet been implemented.
-:::
+You can use `AiSON.parse` to convert an AiSON string directly into a JavaScript value. Syntax errors will throw an `errors.AiScriptSyntaxError`.
 
 ```ts
 import { AiSON } from '@syuilo/aiscript';
 
 const data = AiSON.parse('{ key: "value" }');
+```
+
+You can use `AiSON.stringify` to convert a JavaScript value into an AiSON string. The first argument is the value to convert, and the **third** argument specifies the indentation width. The second argument is unused and exists for compatibility with `JSON.stringify` (replacer functions are not supported).
+
+```ts
+import { AiSON } from '@syuilo/aiscript';
+
+const data = { key: "value" };
+
+// Generate AiSON string without indentation
+const str1 = AiSON.stringify(data);
+
+// Generate AiSON string with an indentation width of 2
+const str2 = AiSON.stringify(data, null, 2);
+
+// Generate AiSON string indented with tabs
+const str3 = AiSON.stringify(data, null, '\t');
 ```
